@@ -15,9 +15,8 @@ DETECTIONS_PATH = os.path.join(BASE_PATH, "detections", f"{SEQUENCE_NAME}.txt")
 IMAGE_SEQUENCE_PATH = os.path.join(BASE_PATH, "sequences", SEQUENCE_NAME)
 OUTPUT_VIDEO_PATH = f"/content/{SEQUENCE_NAME}_tracked_output.mp4"
 
-# DeepSort configuration
-CFG_FILE = "deep_sort_pytorch/configs/deep_sort.yaml"
-# --- CORRECTED LINE BELOW (Absolute Path) ---
+# --- CORRECTED LINES BELOW (Absolute Paths) ---
+CFG_FILE = "/content/deep_sort_pytorch/configs/deep_sort.yaml"
 CHECKPOINT_FILE = "/content/deep_sort_pytorch/deep_sort/deep/checkpoint/ckpt.t7" 
 
 # --- Helper Function to Load Detections ---
@@ -53,7 +52,7 @@ def main():
     use_cuda = torch.cuda.is_available()
     
     deepsort = DeepSort(
-        cfg.DEEPSORT.REID_CKPT,
+        CHECKPOINT_FILE, # Use the absolute path variable
         max_dist=cfg.DEEPSORT.MAX_DIST,
         min_confidence=cfg.DEEPSORT.MIN_CONFIDENCE,
         nms_max_overlap=cfg.DEEPSORT.NMS_MAX_OVERLAP,
