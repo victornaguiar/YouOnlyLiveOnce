@@ -115,11 +115,17 @@ def load_ground_truth(gt_file):
         else:
             raise ValueError(f"Expected at least 6 columns, got {len(gt.columns)}")
         
+        # Convert frame numbers to integers
+        gt['frame'] = gt['frame'].astype(int)
+        
         # Add confidence column if not present
         if 'confidence' not in gt.columns and len(gt.columns) > 6:
             gt.rename(columns={'extra_0': 'confidence'}, inplace=True)
         elif 'confidence' not in gt.columns:
             gt['confidence'] = 1.0
+        
+        # Ensure confidence is numeric
+        gt['confidence'] = pd.to_numeric(gt['confidence'], errors='coerce').fillna(1.0)
         
         print(f"Loaded {len(gt)} detections from {gt['frame'].nunique()} frames")
         print(f"Unique IDs: {gt['id'].nunique()}")
@@ -178,7 +184,7 @@ def extract_frame_number(img_path):
         return int(numbers[-1])  # Take the last number found
     else:
         # Fallback: use the index in sorted order
-        return 0
+        return 1
 
 
 def draw_tracks(frame, tracks, colors=None):
@@ -319,13 +325,13 @@ def main():
             if not frame_detections.empty:
                 # Prepare detections for DeepSort
                 boxes_xywh = frame_detections[['x', 'y', 'w', 'h']].values
-                confidences = frame_detections.get('confidence', [1.0] * len(boxes_xywh))
+                confidences = frame_detections['confidence'].values
                 
                 # Convert to the format expected by deep-sort-realtime
                 raw_detections = []
                 for i, (box, conf) in enumerate(zip(boxes_xywh, confidences)):
                     x, y, w, h = box
-                    raw_detections.append(([x, y, w, h], conf, None))
+                    raw_detections.append(([float(x), float(y), float(w), float(h)], float(conf), None))
                 
                 # Update tracker
                 tracks = tracker.update_tracks(raw_detections, frame=frame)
@@ -348,6 +354,10 @@ def main():
             
         except Exception as e:
             print(f"Error processing frame {img_path}: {e}")
+            # Print debug info for this frame
+            if len(str(e)) < 100:  # Only print debug for specific errors
+                print(f"Frame number extracted: {frame_num}")
+                print(f"Ground truth for frame: {len(gt_data[gt_data['frame'] == frame_num])} detections")
             continue
     
     # Clean up
