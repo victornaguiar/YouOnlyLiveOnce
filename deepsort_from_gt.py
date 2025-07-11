@@ -17,8 +17,8 @@ OUTPUT_VIDEO_PATH = f"/content/{SEQUENCE_NAME}_tracked_output.mp4"
 
 # DeepSort configuration
 CFG_FILE = "deep_sort_pytorch/configs/deep_sort.yaml"
-# Make sure the checkpoint file exists. This should be in the cloned repo.
-CHECKPOINT_FILE = "deep_sort_pytorch/deep_sort/deep/checkpoint/ckpt.t7" 
+# --- CORRECTED LINE BELOW (Absolute Path) ---
+CHECKPOINT_FILE = "/content/deep_sort_pytorch/deep_sort/deep/checkpoint/ckpt.t7" 
 
 # --- Helper Function to Load Detections ---
 def load_detections(det_file):
