@@ -12,7 +12,7 @@ BASE_PATH = "/content/drive/MyDrive/SOCCER_DATA/deepsort_dataset_test"
 SEQUENCE_NAME = "SNMOT-116" # The sequence you want to process
 
 DETECTIONS_PATH = os.path.join(BASE_PATH, "detections", f"{SEQUENCE_NAME}.txt")
-IMAGE_SEQUENCE_PATH = os.path.join(BASE_PATH, "sequences", SEQUENCE_NAME, "img1")
+IMAGE_SEQUENCE_PATH = os.path.join(BASE_PATH, "sequences", SEQUENCE_NAME)
 OUTPUT_VIDEO_PATH = f"/content/{SEQUENCE_NAME}_tracked_output.mp4"
 
 # DeepSort configuration
