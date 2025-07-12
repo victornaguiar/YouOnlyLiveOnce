@@ -1,0 +1,61 @@
+# YOLO Tracker Configuration
+# This configuration file contains all settings for the YOLO tracking system
+
+# Model configuration
+model:
+  yolo_model: yolov8n.pt
+  tracker_type: botsort
+  device: auto  # auto, cpu, cuda
+  confidence_threshold: 0.5
+  iou_threshold: 0.7
+
+# Tracker-specific settings
+tracker:
+  botsort:
+    track_high_thresh: 0.5
+    track_low_thresh: 0.1
+    new_track_thresh: 0.6
+    track_buffer: 30
+    match_thresh: 0.8
+    frame_rate: 30
+
+# Dataset configuration
+dataset:
+  sequences_dir: sequences
+  detections_dir: detections
+  results_dir: tracking_results
+  ground_truth_dir: gt
+  image_extensions:
+    - .jpg
+    - .jpeg
+    - .png
+    - .bmp
+    - .tiff
+    - .tif
+  default_frame_rate: 30
+
+# Evaluation settings
+evaluation:
+  metrics:
+    - HOTA
+    - CLEAR
+    - Identity
+  benchmark: MOT17
+  split: train
+  use_parallel: false
+  num_parallel_cores: 1
+  output_detailed: true
+
+# Video processing settings
+video:
+  output_codec: mp4v
+  default_fps: 30
+  show_progress: true
+  save_frames: false
+
+# Path configuration
+paths:
+  data_root: ./data
+  output_root: ./output
+  models_dir: ./models
+  temp_dir: ./temp
