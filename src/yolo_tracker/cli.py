@@ -6,9 +6,28 @@ import argparse
 import sys
 from pathlib import Path
 
-from .tracker import YOLOTracker
-from .evaluator import TrackEvaluator
-from .dataset import DatasetManager
+# Import modules with graceful error handling
+try:
+    from .tracker import YOLOTracker
+    TRACKING_AVAILABLE = True
+except ImportError:
+    YOLOTracker = None
+    TRACKING_AVAILABLE = False
+
+try:
+    from .evaluator import TrackEvaluator
+    EVALUATION_AVAILABLE = True
+except ImportError:
+    TrackEvaluator = None
+    EVALUATION_AVAILABLE = False
+
+try:
+    from .dataset import DatasetManager
+    DATASET_AVAILABLE = True
+except ImportError:
+    DatasetManager = None
+    DATASET_AVAILABLE = False
+
 from .config import Config
 
 
@@ -125,6 +144,11 @@ def main():
 
 def cmd_track(args, config):
     """Handle track command."""
+    if not TRACKING_AVAILABLE:
+        print("Error: Tracking functionality not available. Please install required dependencies:")
+        print("  pip install torch torchvision ultralytics boxmot")
+        return 1
+        
     tracker = YOLOTracker(args.model)
     
     if args.device != 'auto':
@@ -136,6 +160,11 @@ def cmd_track(args, config):
 
 def cmd_track_detections(args, config):
     """Handle track-detections command."""
+    if not TRACKING_AVAILABLE:
+        print("Error: Tracking functionality not available. Please install required dependencies:")
+        print("  pip install torch torchvision ultralytics boxmot")
+        return 1
+        
     tracker = YOLOTracker()
     
     success = tracker.track_with_custom_detections(
@@ -147,6 +176,11 @@ def cmd_track_detections(args, config):
 
 def cmd_evaluate(args, config):
     """Handle evaluate command."""
+    if not EVALUATION_AVAILABLE:
+        print("Error: Evaluation functionality not available. Please install TrackEval:")
+        print("  pip install git+https://github.com/JonathonLuiten/TrackEval.git")
+        return 1
+        
     evaluator = TrackEvaluator(args.gt_folder, args.tracker_folder)
     
     if not evaluator.validate_setup():
@@ -166,6 +200,11 @@ def cmd_evaluate(args, config):
 
 def cmd_dataset(args, config):
     """Handle dataset commands."""
+    if not DATASET_AVAILABLE:
+        print("Error: Dataset functionality not available. Please install required dependencies:")
+        print("  pip install opencv-python numpy")
+        return 1
+        
     if args.dataset_command == 'generate-seqinfo':
         dataset_manager = DatasetManager(args.dataset_root)
         success = dataset_manager.generate_sequence_info_files()
@@ -198,6 +237,11 @@ def cmd_dataset(args, config):
 
 def cmd_demo(args, config):
     """Handle demo command."""
+    if not TRACKING_AVAILABLE:
+        print("Error: Demo functionality requires tracking dependencies:")
+        print("  pip install torch torchvision ultralytics boxmot")
+        return 1
+        
     output_dir = Path(args.output)
     output_dir.mkdir(parents=True, exist_ok=True)
     
@@ -223,6 +267,11 @@ def cmd_demo(args, config):
 
 def cmd_create_test_video(args, config):
     """Handle create-test-video command."""
+    if not TRACKING_AVAILABLE:
+        print("Error: Test video creation requires OpenCV:")
+        print("  pip install opencv-python numpy")
+        return 1
+        
     tracker = YOLOTracker()
     success = tracker.create_test_video(
         args.output, args.width, args.height, args.duration, args.fps
